@@ -1,24 +1,25 @@
-//variáveis
-int sensorPin = 7;  //pino para receber o sinal do fototransistor
-int estado;         //variável utilizada armazenar o estado do sensor
+int sensorPin = 6;  //pino para receber o sinal do fototransistor
+int estado;         //variável utilizada armazenar o estado do sensor de linha
  
- //configurando os pinos (executado apenas uma vez)
 void setup(){
-    //definindo o pino do LED como saída
   Serial.begin(9600);
   pinMode(sensorPin,INPUT); //definindo o pino do sensor como entrada
 }
- 
 
-
-int linha(){
-  estado = digitalRead(sensorPin); //lê o estado do sensor (alto = inativo, baixo = ativo) //lê o estado do sensor de linha
+void loop(){
+  sensordelinha();
+  Serial.println(estado);
+  delay(100);
+}
   
+  
+  int sensordelinha(){
+  estado = digitalRead(sensorPin); //lê o estado do sensor (alto = inativo, baixo = ativo) //lê o estado do sensor de linha
   if (estado == HIGH) { 
     Serial.println("preto");
   } else { 
     Serial.println("branco");
   }
  delay(1);
-return estado; //retorna o estado lido
+ return estado;
 }
