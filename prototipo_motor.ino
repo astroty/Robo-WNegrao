@@ -13,7 +13,7 @@ void setup()
   
 void loop()  
 {  
-ativarmotor();
+bitultimo = ativarmotor();
 x=0;
 
 }  
@@ -30,6 +30,7 @@ switch(bitultimo){
       }
       return 1;
       break;
+      
     case 1: //Motor est virado para a direita, hora de virar para a esquerda
       digitalWrite(esquerdo, LOW);
       digitalWrite(direito, HIGH);
@@ -39,6 +40,7 @@ switch(bitultimo){
       }
       return 2;
       break;
+      
     case 2: //Motor est virado para a esquerda, hora de virar para a direita
       digitalWrite(esquerdo, HIGH);
       digitalWrite(direito, LOW);
@@ -48,6 +50,7 @@ switch(bitultimo){
       }
       return 1;
       break;
+      
     case 3: //Detectou um robo na frente
       digitalWrite(esquerdo, HIGH);
       digitalWrite(direito, HIGH);
@@ -55,9 +58,11 @@ switch(bitultimo){
         //******parte de leitura dos sensores***** Vai consistir de uma leitura e um IF que resultará em um return+break caso necessário
         // Setar no if para duas situaçes, caso o sensor de linha seja encontrado retornar o valor 4, caso o rob suma da frente, retornar valor 5
         x++; //caso o robo saia da frente dos sensores ou caso seja encontrada uma linha
+        //Nao esquecer do return aqui dentro
       }
       break;
-    case 4:
+      
+    case 4://caso onde ele detectou uma linha no sensor frontal
       digitalWrite(esquerdo, HIGH);
       digitalWrite(direito, LOW);
       while(x<2*t){
@@ -67,7 +72,8 @@ switch(bitultimo){
       }
       return 1
       break;
-    case 5:
+      
+    case 5: //O rob sumiu de um dos sensores do robo (direito ou esquerdo), ele tentara fazer o tracking
       switch(sensor){
       case 0: //robo esquivou para a esquerda do robo
         //While(ativar a roda direita em velocidade maxima e a esquerda em meia velocidade. Da break quando os dois sensores sao detectados, voltando para o ataque.
