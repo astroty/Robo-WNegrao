@@ -1,14 +1,25 @@
-#define esquerdo 5 //Pino 5 ativa o motor esquerdo para frente
-#define direito 6 //Pino 6 ativa o motor direito para frente
-int bitultimo=0; //define qual foi a ultima aço feita pelo motor (se ele ativou esquerdo, direito, ou outro)
-int t; //Tempo dos estados do motor
-int x; //contador
-int sensor; //Variavel determinando se o robo adversario saiu do sensor direito ou do sensor esquerdo
+#define esquerdo1 5  //Pino 5 ativa o motor esquerdo para frente
+#define esquerdo2 6  //Pino 5 ativa o motor esquerdo para frente
+#define direito1  7  //Pino 6 ativa o motor direito para frente
+#define direito2  8  //Pino 6 ativa o motor direito para frente
+#define linha     10 //sensor de linha
+#define iv        11 //infravermelho
+#define usa       12 //ultrassom
+int bitultimo=0;     //define qual foi a ultima aço feita pelo motor (se ele ativou esquerdo, direito, ou outro)
+int t;               //Tempo dos estados do motor
+int x;               //contador
+int sensor;
+
 void setup()  
 {  
    Serial.begin(9600); //inicia a porta serial  
-   pinMode(esquerdo, OUTPUT);
-   pinMode(direito, OUTPUT);
+   pinMode(esquerdo1, OUTPUT);
+   pinMode(esquerdo2, OUTPUT);
+   pinMode(direito1, OUTPUT);
+   pinMode(direito2, OUTPUT);
+   pinMode(linha, INPUT);
+   pinMode(iv, INPUT);
+   pinMode(usa, INPUT);
 }  
   
 void loop()  
@@ -18,70 +29,119 @@ x=0;
 
 }  
 
-int ativarmotor()
-{
+int ativarmotor(){
 switch(bitultimo){
     case 0: //estado inicial, onde ele virará meio tempo para a esquerda
-      delay(5);
-      digitalWrite(esquerdo, HIGH);
-      while(x<(t/2)){
-        //******parte de leitura dos sensores***** Vai consistir de uma leitura e um IF que resultará em um return+break caso necessário
+      delay(5000);
+      esquerdofrente();
+      while(x<(t/2) && sensor==0){
+        sensor=leitura();
         x++;
       }
-      return 1;
+      if(sensor==0) return 1;
+      else return sensor;
       break;
       
     case 1: //Motor est virado para a direita, hora de virar para a esquerda
-      digitalWrite(esquerdo, LOW);
-      digitalWrite(direito, HIGH);
+      esquerdopara();
+      direitofrente();
       while(x<t){
-        //******parte de leitura dos sensores***** Vai consistir de uma leitura e um IF que resultará em um return+break caso necessário
+        sensor=leitura();
         x++;
       }
-      return 2;
+      if(sensor==0) return 2;
+      else return sensor;
       break;
       
     case 2: //Motor est virado para a esquerda, hora de virar para a direita
-      digitalWrite(esquerdo, HIGH);
-      digitalWrite(direito, LOW);
+      esquerdofrente();
+      direitopara();
       while(x<t){
-        //******parte de leitura dos sensores***** Vai consistir de uma leitura e um IF que resultará em um return+break caso necessário
+        sensor=leitura();
         x++;
+      }
+      if(sensor==0) return 1;
+      else return sensor;
+      break;
+      
+    case 3: //Detectou um robo na frente
+      esquerdofrente();
+      direitofrente();
+      while(sensor==3){
+       sensor=leitura();
+      }
+      return sensor;
+      break;
+      
+    case 4://caso onde ele detectou uma linha no sensor frontal
+      esquerdofrente();
+      direitopara();
+      while(x<2*t){
+        x++; 
       }
       return 1;
       break;
       
-    case 3: //Detectou um robo na frente
-      digitalWrite(esquerdo, HIGH);
-      digitalWrite(direito, HIGH);
-      while(x=0){
-        //******parte de leitura dos sensores***** Vai consistir de uma leitura e um IF que resultará em um return+break caso necessário
-        // Setar no if para duas situaçes, caso o sensor de linha seja encontrado retornar o valor 4, caso o rob suma da frente, retornar valor 5
-        x++; //caso o robo saia da frente dos sensores ou caso seja encontrada uma linha
-        //Nao esquecer do return aqui dentro
-      }
+    case 5: //tracking esquerdo
+      //nao sera incluido enquanto/se nao for instalado o pwm
       break;
-      
-    case 4://caso onde ele detectou uma linha no sensor frontal
-      digitalWrite(esquerdo, HIGH);
-      digitalWrite(direito, LOW);
-      while(x<2*t){
-        //******parte de leitura dos sensores***** Vai consistir de uma leitura e um IF que resultará em um return+break caso necessário
-        // Setar no if para duas situaçes, caso o sensor de linha seja encontrado retornar o valor 4, caso o rob suma da frente, retornar valor 5
-        x++; 
-      }
-      return 1
+    case 6: //tracking direito
+      //nao sera incluido enquanto/se nao for instalado o pwm
       break;
-      
-    case 5: //O rob sumiu de um dos sensores do robo (direito ou esquerdo), ele tentara fazer o tracking
-      switch(sensor){
-      case 0: //robo esquivou para a esquerda do robo
-        //While(ativar a roda direita em velocidade maxima e a esquerda em meia velocidade. Da break quando os dois sensores sao detectados, voltando para o ataque.
-        break;
-      case 1:
-        //While(ativar a roda esquerda em velocidade maxima e a direita em meia velocidade. Da break quando os dois sensores sao detectados, voltando para o ataque.
-        break;
-      }
+   }
+}
+
+
+void esquerdofrente(){
+   digitalWrite(esquerdo1, HIGH);
+   digitalWrite(esquerdo2, LOW);
+   
+}
+
+
+void direitofrente(){
+   digitalWrite(direito1, HIGH);
+   digitalWrite(direito2, LOW);
+   
+}
+
+void esquerdotraz(){
+   digitalWrite(esquerdo1, LOW);
+   digitalWrite(esquerdo2, HIGH);
+}
+
+
+void direitotraz(){
+   digitalWrite(direito1, LOW);
+   digitalWrite(direito2, HIGH);
+}
+
+void direitopara(){
+   digitalWrite(direito1, LOW);
+   digitalWrite(direito2, LOW);
+}
+
+void esquerdopara(){
+   digitalWrite(esquerdo1, LOW);
+   digitalWrite(esquerdo2, LOW);
+}
+
+
+int leitura(){
+   int l=digitalRead(linha) , i=digitalRead(iv) , u=digitalRead(usa);
+   if(l==1){
+      return 4;
+   }
+   if(i==1 && u==1){
       return 3;
-  }   break;
+   }
+   if(i==1 && u==0){
+      return 5;
+   }
+   if(u==1 && i==0){
+      return 6;
+   }
+   else{
+      return 0;
+   }
 }
