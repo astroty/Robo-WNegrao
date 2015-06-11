@@ -12,7 +12,7 @@ void loop() {
     digitalWrite(saida, HIGH);
   }
   else{
-    Serial.println("nada");
+    //Serial.println("nada");
     digitalWrite(saida, LOW);
   }
   delay(100);
@@ -23,10 +23,10 @@ boolean encontrarObstaculoIR(){
   //inches = 4192.936 * pow(sensorValue,-0.935) - 3.937;
   cm = 10650.08 * pow(sensorValue,-0.935) - 10;
   if(cm>=20.0 && cm<=150){
-  Serial.print("cm: ");
-  Serial.println(cm);
+  //Serial.print("cm: ");
+  //Serial.println(cm);
   return true;
   }
-  Serial.println("nada");
+  //Serial.println("nada");
   return false;
 }
