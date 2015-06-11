@@ -21,8 +21,8 @@ void loop() {
 boolean encontrarObstaculoIR(){
   sensorValue = analogRead(sensorIR);
   //inches = 4192.936 * pow(sensorValue,-0.935) - 3.937;
-  cm = 10650.08 * pow(sensorValue,-0.935) - 10;
-  if(cm>=20.0 && cm<=150){
+  cm = 10650.08 * pow(sensorValue,-0.935) - 7;
+  if(cm>=20.0 && cm<=150.0){
   //Serial.print("cm: ");
   //Serial.println(cm);
   return true;
