@@ -1,5 +1,5 @@
 #define sensorIR 0    //Declaração do Pino analógico em que será feita a leitura do sensor
-#define saida 7       //Pino onde será escrito o booleano (Se há, ou não, um objeto ou adversário na frente do robô)
+#define saida 10       //Pino onde será escrito o booleano (Se há, ou não, um objeto ou adversário na frente do robô)
 float sensorValue, cm;    //Must be of type float for pow()
 
 void setup() {
