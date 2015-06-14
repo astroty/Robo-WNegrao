@@ -1,14 +1,15 @@
-#define saida3 3
-#define saida4 4
-#define sensorFrente 5 //pino para receber o sinal do fototransistor
-#define sensorTras 6
+#define saida3 3 //saida para o primeiro sensor de linha(Dianteiro)
+#define saida4 4 //saida para o segundo sensor de linha (Traseiro)
+#define sensorFrente 5 //pino para receber o sinal do fototransistor de frente
+#define sensorTras 6 //pino para receber o sinal do fototransistor de tras
 int estado;     //variável utilizada armazenar o estado do sensor de linha
  
 void setup(){
   Serial.begin(9600);
   pinMode(sensorFrente,INPUT); //definindo o pino do sensor como entrada
   pinMode(sensorTras, INPUT);
-  pinMode(saida3, OUTPUT);
+  pinMode(saida3, OUTPUT); //pino para a escrita caso o sensor indentifique a linha branca
+  pinMode(saida4, OUTPUT);
 }
 
 void loop(){
@@ -20,19 +21,19 @@ void loop(){
   
 int sensordelinhaFrente(){
   estado = digitalRead(sensorFrente); //lê o estado do sensor (alto = inativo, baixo = ativo) //lê o estado do sensor de linha
-  if (estado == HIGH) { 
+  /*if (estado == HIGH) { 
     Serial.println("preto");
   } else { 
     Serial.println("branco");
-  }
- return !estado;
+  }*/
+ return !estado; //retorna o inverso, logo se encontrar lihnha branca retornará true, se tiver em preto, false.
 }
 int sensordelinhaTras(){
-  estado = digitalRead(sensorTras); //lê o estado do sensor (alto = inativo, baixo = ativo) //lê o estado do sensor de linha
+  /*estado = digitalRead(sensorTras); //lê o estado do sensor (alto = inativo, baixo = ativo) //lê o estado do sensor de linha
   if (estado == HIGH) { 
     Serial.println("preto");
   } else { 
     Serial.println("branco");
-  }
- return !estado;
+  }*/
+ return !estado; //retorna o inverso, logo se encontrar lihnha branca retornará true, se tiver em preto, false.
 }
