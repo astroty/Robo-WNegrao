@@ -2,6 +2,7 @@
 #define esquerdo2 6  //Pino 5 ativa o motor esquerdo para frente
 #define direito1  7  //Pino 6 ativa o motor direito para frente
 #define direito2  8  //Pino 6 ativa o motor direito para frente
+#define linha2    9  //sensor de linha
 #define linha     10 //sensor de linha
 #define iv        11 //infravermelho
 #define usa       12 //ultrassom
@@ -88,6 +89,21 @@ switch(bitultimo){
     case 6: //tracking direito
       //nao sera incluido enquanto/se nao for instalado o pwm
       break;
+    case 7: //caso ele tenha detectado uma linha na traseira dele. O que será impossível sem a ação do outro robô, pois ele não dá ré por conta própria
+      esquerdofrente();
+      direitotraz();
+      //tenta girar o robô, para o por numa posição desvantajosa
+      while(x<t){
+        x++; //primeiro dá uma meia revolução, para sair de cima da linha e poder começar a ler normalmente
+      }
+      x=0; //reseta o contador
+      sensor=leitura(); //reseta a variavel sensor
+      while(x<t && sensor==3){ //dá o resto da revolução, contanto que o adversário esteja na frente
+        sensor=leitura(); 
+        x++; 
+      }
+      return sensor; //ao final da revoluçao, empurra normalmente
+      break;
    }
 }
 
@@ -128,9 +144,12 @@ void esquerdopara(){
 
 
 int leitura(){
-   int l=digitalRead(linha) , i=digitalRead(iv) , u=digitalRead(usa);
+   int l=digitalRead(linha). l2=digitalRead(linha2) , i=digitalRead(iv) , u=digitalRead(usa);
    if(l==1){
       return 4;
+   }
+   if(l2==1){
+      return 7;
    }
    if(i==1 && u==1){
       return 3;
