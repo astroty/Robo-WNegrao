@@ -1,0 +1,24 @@
+// Leitura de uma chave
+
+
+int pinobotao = 7; //Porta ligada no botão
+boolean estado=false;
+void setup()
+{
+     Serial.begin(9600);
+     pinMode(pinobotao, INPUT); //Define o pino como entrada (Pino do botao)
+}
+
+void loop()
+{
+  if (digitalRead(pinobotao) == HIGH)
+  {
+    estado=true;
+  }
+  else
+  estado=false;
+  if(estado){
+  Serial.println("ok!");  
+  delay(100);
+  }
+}

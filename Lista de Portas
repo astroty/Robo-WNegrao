@@ -1,0 +1,17 @@
+Saidas Digitais:
+13 (Saida da onda do ultrassom)
+11 (Saida ultrassom)
+10 (Saida infravermelho)
+4 (Saida sensor de linha traveiro)
+3 (Saida sensor de linha dianteiro)
+
+Entradas digitais
+12 (Entrada do ultrassom)
+6 (Entrada sensor de linha traseiro)
+5 (Entrada sensor de linha dianteiro)
+
+Entrada analógica:
+0 (Sensor IR)
+
+
+OBS: As 'chaves fim de curso' serão colocados direto no outro arduino
