@@ -28,7 +28,7 @@ void loop(){
   digitalWrite(saida4, sensordelinhaTras());
     
     
-    if(encontrarObstaculo()){
+  if(encontrarObstaculo()){
     digitalWrite(saida2, HIGH);//Caso retorne true escreve 5v no pino de saida
     Serial.println("ok");
   }
@@ -45,7 +45,8 @@ int sensordelinhaFrente(){
   estado1 = digitalRead(sensorFrente); //lê o estado do sensor (alto = inativo, baixo = ativo) //lê o estado do sensor de linha
   if (estado1 == HIGH) { 
     Serial.println("preto 1");
-  } else { 
+  } 
+  else { 
     Serial.println("branco 1");
   }
  return !estado1; //retorna o inverso, logo se encontrar lihnha branca retornará true, se tiver em preto, false.
