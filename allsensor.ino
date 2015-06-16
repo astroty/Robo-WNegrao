@@ -11,6 +11,7 @@ int estado1, estado2;     //variável utilizada armazenar o estado do sensor de 
 #define echoPin 12 //Pino do Echo (Obs: Não trocar)
 #define saidaultrassom 11 //Pino definido para escrita caso o sensor encontre algo LED
 long duration, distance;
+int x;
 
 //Sensor IR
     
@@ -46,28 +47,26 @@ void loop(){
   
   //IR
   if(encontrarObstaculoIR()){ //executa função principal que retorna boleano
-    digitalWrite(saidaIR, HIGH); //caso o boleano retorne true, será feita uma escrita na porta
+   digitalWrite(saidaIR, HIGH); //caso o boleano retorne true, será feita uma escrita na porta
   }
   else{
-    //Serial.println("nada");
-    digitalWrite(saidaIR, LOW); //caso contrario a porta estará sem sinal (LOW)
+   digitalWrite(saidaIR, LOW); //caso contrario a porta estará sem sinal (LOW)
   }
   
   //Ultrassom
-    encontrarObstaculoUS();
-    Serial.print("||US:");
-    Serial.print(distance);
-    if(encontrarObstaculoUS()){
-      //Serial.print("||ok");
-
-      digitalWrite(saidaultrassom, HIGH);//Caso retorne true escreve 5v no pino de saida
-      
-    }
-    else{
-      //Serial.print("||nada"); //caso retorne false deixa o sinal em LOW no pino de saida
-      digitalWrite(saidaultrassom, LOW);
-
+  x=6;
+  if(x>=6){
+   if(encontrarObstaculoUS()){
+     Serial.print("||US:");
+     Serial.print(distance);
+     digitalWrite(saidaultrassom, HIGH);//Caso retorne true escreve 5v no pino de saida
+   }
+   else{
+     digitalWrite(saidaultrassom, LOW);
+   }
+   x=0;
   }
+  
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
