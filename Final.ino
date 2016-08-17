@@ -10,7 +10,7 @@
 #define trigPin     13   //Pino do trigger (Obs: Não trocar)
 int bitultimo=0;         //define qual ser a proxima açao do motor
 int bitinicio;           //define a ultima açao do motor
-int t=800;                 //Tempo dos estados do motor
+int t=800;               //Tempo em que os motores ficam no estado
 int sensor;              //variavel que sera usada para o return na funçao ativarmotor(). Ele sera atribuido o valor da leitura e sera uma das condiçoes de saida precoce do while, sendo retornado como resultado da funçao int
 //LINHA
 int estado1, estado2;     //variável utilizada armazenar o estado do sensor de linha
@@ -49,9 +49,11 @@ void setup()
 
 void loop()  
 {
+//Mostra o ultimo estado do automato
 Serial.println("");     
 Serial.print("bitultimo:");     
-Serial.print(bitultimo);   
+Serial.print(bitultimo);  
+//Programação começa com a função ativar motor. bitultimo=0 caso programa recem iniciado. Valor será sobreescrito pela função.
 bitultimo = ativarmotor();
 LastPulseTime=0;
 startTime=0;
@@ -64,7 +66,7 @@ startTime=0;
 // MOTORES
 
 
-
+//Nosso automato tinha um relé na roda esquerda, sendo que era basicamente ON e OFF e a roda direita tinha uma ponte H, podendo ir trás, frente e parar.
 //Rele esquerda
 void esquerdofrente(){
      digitalWrite(esquerdo1, LOW);
@@ -112,7 +114,7 @@ void sensordelinhaFrente(){
 }
 
 
-
+//Codigo para caso os botoes laterais sejam ativados (Caso possuir)
 void buttom(){
         if(button1.isPressed()){
                   bitultimo=6;
@@ -127,8 +129,8 @@ void buttom(){
 }
 
 void encontrarObstaculoUS(){
- //ComeÃ§o do cÃ³digo padrÃ£o para uso do ultrassom (creio que nÃ£o preciso explicar isso)
-
+  //Começo do codigo de detenção de obstaculos
+  //Escreve e lê o ultrassom
   digitalWrite(trigPin, LOW);
 
   delayMicroseconds(2);
@@ -144,12 +146,13 @@ void encontrarObstaculoUS(){
   Serial.print("Duraçao:");
   Serial.println(duration);
 */
+  //Calcula a distancia
   distance = ((duration)/29.1)/2;
 
   Serial.println("");  
   Serial.print("Distancia:");
   Serial.println(distance);
-  if (distance >= 100 || distance <= 0){} //Caso a distancia seja maior que 130(nosso robÃ´ tem 20cm e a arena 150cm, logo 130cm Ã© o suficient para atravessa-la) ou menor/igual a 0 (nada encontrado) retorna FALSO
+  if (distance >= 130 || distance <= 0){} //Caso a distancia seja maior que 130(nosso robÃ´ tem 20cm e a arena 150cm, logo 130cm Ã© o suficient para atravessa-la) ou menor/igual a 0 (nada encontrado) retorna FALSO
   
   else {  
     bitultimo=3;
@@ -162,17 +165,13 @@ void encontrarObstaculoUS(){
 
 
 int leitura(){
-   //linhafrente
-//   l=sensordelinhaFrente();  
-sensordelinhaFrente();  
-//buttom();
-   //linhatras
-//   l2=sensordelinhaTras();
-//sensordelinhaTras();
-   //US
-   //u=encontrarObstaculoUS();
-encontrarObstaculoUS();   
-      return 0;
+    //Aqui, o sensor retorna 0 caso nada tenha sido encontrado. Caso tenha algum obstaculo na frente, o encontrarObstaculoUS(); já toma uma previdencia e seta a variavel sensor como 3
+    //linhafrente
+    sensordelinhaFrente();  
+    //buttom();
+    //US
+    encontrarObstaculoUS();   
+    return 0;
 }
 
 
@@ -180,10 +179,15 @@ encontrarObstaculoUS();
 int ativarmotor(){
 switch(bitultimo){
     case 0: //estado inicial, onde ele virará meio tempo para a esquerda
+      //Delai inicial de 3,5 sec pra começo da partida
       delay(3500);
       direitopara();
       esquerdofrente();
       startTime=millis();      
+      /*Ele só verifica a resposta do ultrassom até um certo tempo, depois ele considera como a distancia é significativamente maior e não tem nada.
+      Necessário pois o tempo de resposta do ultrassom é muito variável, sendo que ele pode levar um tempo de resposta significativa caso ele encontre uma parede numa distancia distante.
+      Assim, temos controle do tempo máximo que o sensor terá, dando mais previsibilidade aos movimentos do robô
+      */
       while(LastPulseTime<=(t/2) && sensor==0){
         sensor=leitura();
         LastPulseTime=(millis()-startTime);
@@ -249,7 +253,7 @@ switch(bitultimo){
       else return sensor;
       break;
       
-    case 4://caso onde ele detectou uma linha no sensor frontal
+    case 4://caso onde ele detectou uma linha no sensor frontal (Caso tenha)
       Serial.println("");     
       Serial.print("bitultimo:");     
       Serial.print(bitultimo);     
@@ -265,7 +269,7 @@ switch(bitultimo){
       else return sensor;
       break; 
       
-    case 5: //caso ele tenha detectado uma linha na traseira dele. O que será impossível sem a ação do outro robô, pois ele não dá ré por conta própria
+    case 5: //NÃO REALMENTE UTILIZADO, MAS AINDA MANTIDO AQUI. CASO QUEIRA UTILIZAR, MEXA NA SESSÃO sensordelinhaFrente PARA ADICIONAR UM TERCEIRO SENSOR, ESTE TRAZEIRO.. caso ele tenha detectado uma linha na traseira dele. O que será impossível sem a ação do outro robô, pois ele não dá ré por conta própria
       Serial.println("");     
       Serial.print("bitultimo:");     
       Serial.print(bitultimo); 
@@ -283,7 +287,7 @@ switch(bitultimo){
       return sensor; //ao final da revoluçao, empurra normalmente
       break; 
       
-    case 6:  //botão esquerdo
+    case 6:  //botão esquerdo (Caso tenha)
       Serial.println("");     
       Serial.print("bitultimo:");     
       Serial.print(bitultimo);     
@@ -302,7 +306,7 @@ switch(bitultimo){
       else return sensor;
       break;
       
-    case 7:  //botão esquerdo
+    case 7:  //botão direito (caso tenha)
       Serial.println("");     
       Serial.print("bitultimo:");     
       Serial.print(bitultimo);       
